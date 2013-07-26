@@ -5,20 +5,21 @@
 typedef unsigned int UINT4;
 
 typedef struct {
-  unsigned int x;
-  unsigned int y;
+  UINT4 x;
+  UINT4 y;
 } CELL; 
 
 typedef struct {
-  unsigned int width;
-  unsigned int height;
-  unsigned int leftFilled;
-  unsigned int rightFilled;
-  unsigned int topFilled;
-  unsigned int bottomFilled;
+  UINT4 width;
+  UINT4 height;
+  UINT4 cellCount;
+  UINT4 leftFilled;
+  UINT4 rightFilled;
+  UINT4 topFilled;
+  UINT4 bottomFilled;
 } BOARD;
 
-void moveRight(UINT4***, BOARD*, CELL, CELL, UINT4, UINT4);
+void moveRight(UINT4***, BOARD*, CELL, CELL, UINT4);
 
 void printSpiral(UINT4 **spiral, const UINT4 width, const UINT4 height)
 {
@@ -32,14 +33,14 @@ void printSpiral(UINT4 **spiral, const UINT4 width, const UINT4 height)
   }
 }
 
-void moveUp(UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value, UINT4 cellCount) {
+void moveUp(UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value) {
   UINT4 index;
   for (index = start.y; index >= end.y && index >= 0; index--) {
     (*spiral)[index][start.x] = value++;
   }
   board->leftFilled++;
 
-  if (value != cellCount) {
+  if (value != board->cellCount) {
     CELL s;
     CELL e;
 
@@ -47,18 +48,18 @@ void moveUp(UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value, UI
     s.y = end.y;
     e.x = (board->width - 1) - board->rightFilled;
     e.y = s.y;
-    moveRight(spiral, board, s, e, value, cellCount);
+    moveRight(spiral, board, s, e, value);
   }
 }
 
-void moveLeft(UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value, UINT4 cellCount) { 
+void moveLeft(UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value) { 
   int index;
   for (index = start.x; (index >= end.x && index >= 0); index--) {
     (*spiral)[start.y][index] = value++;
   }
   board->bottomFilled++;
   
-  if (value != cellCount) {
+  if (value != board->cellCount) {
     CELL s;
     CELL e;
 
@@ -66,18 +67,18 @@ void moveLeft(UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value, 
     s.y = end.y - 1;
     e.x = s.x;
     e.y = board->topFilled;
-    moveUp(spiral, board, s, e, value, cellCount);
+    moveUp(spiral, board, s, e, value);
   }
 }
 
-void moveDown (UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value, UINT4 cellCount) { 
+void moveDown (UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value) { 
   int index;
   for (index = start.y; index <= end.y; index++) {
     (*spiral)[index][start.x] = value++;
   }
   board->rightFilled++;
   
-  if (value != cellCount) {
+  if (value != board->cellCount) {
     CELL s;
     CELL e;
 
@@ -85,18 +86,18 @@ void moveDown (UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value,
     s.y = end.y;
     e.x = board->leftFilled; 
     e.y = s.y;
-    moveLeft(spiral, board, s, e, value, cellCount);
+    moveLeft(spiral, board, s, e, value);
   }
 }
 
-void moveRight(UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value, UINT4 cellCount) {
+void moveRight(UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value) {
   int index;
   for (index = start.x; index <= end.x; index++) {
     (*spiral)[start.y][index] = value++;
   }
   board->topFilled++;
   
-  if (value != cellCount) {
+  if (value != board->cellCount) {
     CELL s;
     CELL e;
     
@@ -104,7 +105,7 @@ void moveRight(UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value,
     s.y = end.y + 1;
     e.x = s.x;
     e.y = (board->height - 1) - board->bottomFilled;
-    moveDown(spiral, board, s, e, value, cellCount);
+    moveDown(spiral, board, s, e, value);
   }
 }
 
@@ -120,12 +121,13 @@ void whirlAround(UINT4 ***spiral, const UINT4 width, const UINT4 height) {
 
   board.width = width;
   board.height = height;
+  board.cellCount = width * height;
   board.leftFilled = 0;
   board.rightFilled = 0;
   board.topFilled = 0;
   board.bottomFilled = 0;
 
-  moveRight(spiral, &board, start, end, 0, width * height);
+  moveRight(spiral, &board, start, end, 0);
 }
 
 void makeSpiral(const UINT4 width, const UINT4 height) {
