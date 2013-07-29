@@ -34,8 +34,8 @@ void printSpiral(UINT4 **spiral, const UINT4 width, const UINT4 height)
 }
 
 void moveUp(UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value) {
-  UINT4 index;
-  for (index = start.y; index >= end.y && index >= 0; index--) {
+  int index;
+  for (index = start.y; index >= (int)end.y; index--) {
     (*spiral)[index][start.x] = value++;
   }
   board->leftFilled++;
@@ -54,7 +54,7 @@ void moveUp(UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value) {
 
 void moveLeft(UINT4 ***spiral, BOARD *board, CELL start, CELL end, UINT4 value) { 
   int index;
-  for (index = start.x; (index >= end.x && index >= 0); index--) {
+  for (index = start.x; index >= (int)end.x; index--) {
     (*spiral)[start.y][index] = value++;
   }
   board->bottomFilled++;
